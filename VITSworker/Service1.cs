@@ -10,19 +10,24 @@ using System.Threading.Tasks;
 
 namespace VITSworker
 {
-    public partial class Service1 : ServiceBase
+    public partial class VitsDBupdate : ServiceBase
     {
-        public Service1()
+        public VitsDBupdate()
         {
             InitializeComponent();
         }
-
+        public void Ondebug()
+        {
+            OnStart(null);
+        }
         protected override void OnStart(string[] args)
         {
+            System.IO.File.Create(AppDomain.CurrentDomain.BaseDirectory +"onstart.txt");
         }
 
         protected override void OnStop()
         {
+            System.IO.File.Create(AppDomain.CurrentDomain.BaseDirectory + "onstop.txt");
         }
     }
 }

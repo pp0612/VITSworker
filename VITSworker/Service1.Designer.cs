@@ -1,6 +1,6 @@
 ﻿namespace VITSworker
 {
-    partial class Service1
+    partial class VitsDBupdate
     {
         /// <summary> 
         /// Required designer variable.
