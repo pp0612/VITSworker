@@ -1,3 +1,87 @@
 http://olivier-richard.azurewebsites.net/2015/03/05/call-a-powershell-script-from-c-code/
 http://powershelltutorial.net/questions/how-to-execute-powershell-script-from-c-sharp-commandline-arguments
 http://www.sharepointpals.com/post/How-to-execute-PowerShell-script-(ps1-file)-from-C-code
+https://www.neowin.net/forum/topic/1263570-executing-a-powershell-script-from-c-with-parameters/
+https://www.roelvanlisdonk.nl/2010/03/16/how-to-execute-powershell-scripts-from-c-with-an-execution-policy-unrestricted/
+
+
+
+
+
+
+
+
+
+[Test]
+[Explicit("Not a unittest")]
+public void RunExecuteReCreatableScriptsInFolder()
+{
+List<string> parameters = new List<string>(){@"Data Source=.;Initial Catalog=TestDB;Integrated Security=SSPI;", @"C:\Temp"};
+// Run a PowerShell script with two parameter and set execution policy to Unrestricted
+RunPowershellScript(@"C:\Temp\Test.ps1", parameters);
+}
+
+
+Function
+private static void RunPowershellScript(string scriptFile, List<string> parameters)
+{
+// Validate parameters
+if (string.IsNullOrEmpty(scriptFile)) { throw new ArgumentNullException("scriptFile"); }
+if (parameters == null) { throw new ArgumentNullException("parameters"); }
+RunspaceConfiguration runspaceConfiguration = RunspaceConfiguration.Create();
+using (Runspace runspace = RunspaceFactory.CreateRunspace(runspaceConfiguration))
+{
+runspace.Open();
+RunspaceInvoke scriptInvoker = new RunspaceInvoke(runspace);
+scriptInvoker.Invoke("Set-ExecutionPolicy Unrestricted");
+Pipeline pipeline = runspace.CreatePipeline();
+Command scriptCommand = new Command(scriptFile);
+Collection<CommandParameter> commandParameters = new Collection<CommandParameter>();
+foreach (string scriptParameter in parameters)
+{
+CommandParameter commandParm = new CommandParameter(null, scriptParameter);
+commandParameters.Add(commandParm);
+scriptCommand.Parameters.Add(commandParm);
+}
+pipeline.Commands.Add(scriptCommand);
+Collection<PSObject> psObjects;
+psObjects = pipeline.Invoke();
+}
+} 
+
+
+
+
+
+
+
+==================================================================================
+
+
+
+ public static void RunPowershellCommand(string scriptPath, string[,] variables)
+        {
+            RunspaceConfiguration runspaceConfiguration = RunspaceConfiguration.Create();
+            Runspace runspace = RunspaceFactory.CreateRunspace(runspaceConfiguration);
+            runspace.Open();
+            RunspaceInvoke scriptInvoker = new RunspaceInvoke(runspace);
+            scriptInvoker.Invoke("Set-ExecutionPolicy Unrestricted");
+
+            Pipeline pipeline = runspace.CreatePipeline();
+
+            Command myCommand = new Command(scriptPath, false);
+
+            if (variables[0, 0] != null)
+            {
+                for (int i = 0; i < variables.GetLength(0); i++)  //Add all the powershell variables we might need in the partner specific.
+                {
+                    runspace.SessionStateProxy.SetVariable(variables[i, 0], variables[i, 1]);
+                }
+            }
+
+
+            pipeline.Commands.Add(myCommand);
+            Collection<PSObject> psObjects;
+            psObjects = pipeline.Invoke();
+            runspace.Close();
+      }
