@@ -1,0 +1,3 @@
+http://olivier-richard.azurewebsites.net/2015/03/05/call-a-powershell-script-from-c-code/
+http://powershelltutorial.net/questions/how-to-execute-powershell-script-from-c-sharp-commandline-arguments
+http://www.sharepointpals.com/post/How-to-execute-PowerShell-script-(ps1-file)-from-C-code
